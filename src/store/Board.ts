@@ -1,5 +1,4 @@
-import { type } from "os";
-import { Action, Reducer } from "redux";
+import {  Reducer } from "redux";
 import {
   showAllAvailableSpots,
   moveToAvailableSpot,
