@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, } from "react";
 import { connect } from "react-redux";
 import * as BoardStore from "../store/Board";
 import "./Layout.css";
@@ -37,7 +37,6 @@ const BoardPlace: FC<props> = ({
       moveToPlace(index, outerIndex);
     } else showAvailable(index, outerIndex);
   }
-  const [hidden, setDisplay] = useState(false);
   /*
     function toLetter(input: number) {
         const arr = ["h", "g", "f", "e", "d", "c", "b", "a"];
