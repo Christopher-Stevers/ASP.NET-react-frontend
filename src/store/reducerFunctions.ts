@@ -1,24 +1,54 @@
+export const tranformToPawn =(state: any, payload: string)=>{
+return {...state,
+board: state.board.map((elem:any)=>{
+  return elem.map((innerElem:any)=>{
+    if(innerElem.choose){
+      return    {...innerElem,
+    choose: false,
+    piece: payload
+  }}
+    return innerElem;
+  })
+})}
+}
+//did we win
+export const setWin =(state:any, payload: string)=>{
+  return {...state, win: {color: payload}} 
+}
 //If move is legal execute move.
 export const moveToAvailableSpot =(state: any, payload:[number, number])=>{
+  console.log(state.turn);
   const [x,y]=payload;
+  
 return {
   board: state.board.map((elem: any, index: number) =>
   elem.map((innerElem: any, innerIndex: number) => {
+    // Check if we can move there.
     if(innerElem.available==="yes"&&index===y&&innerIndex===x){
+      //Handle pawn grow up
+      if(state.currentPiece.piece==="pawn"&&(index===0||index===7)){
+        return { ...state.currentPiece,
+          choose:true,
+          available: "no"}
+      }
       return{ ...state.currentPiece,
       available: "no"}
     }
     if(state.currentPiece.x===innerIndex&&state.currentPiece.y===index&&state.board[y][x].available==="yes"){
+      
       return {
         color: "",
         piece:"",
-        available: "no"
+        available: "no",
       }
     }
     return {...innerElem,
     available:"no"};
   })),
-  currentPiece:{piece: ""}
+  currentPiece:{piece: ""},
+  
+  turn:{color:(state.turn.color==="white")?"black":"white"},
+  win: ""
 };
 }
 //check if move is legal and set available accordingly.
@@ -62,6 +92,7 @@ export const showAllAvailableSpots = (
   const obvj = scanObstruct();
   console.log( obvj.x2, obvj.x1);
   return {
+    ...state,
     currentPiece: { piece, color, x, y },
     board: state.board.map((elem: any, index: number) =>
       elem.map((innerElem: any, innerIndex: number) => {
@@ -93,26 +124,26 @@ export const showAllAvailableSpots = (
         //why are pawns so complicated.
         if (piece === "pawn") {
           if (
-            (innerIndex === x &&
-              innerElem.piece === "" &&
-              (index === y + 1 ||(y===1&&index===y+2))&&
-              color === "black") ||
-            (innerIndex === x &&
-              innerElem.piece === "" &&
-              (index === y - 1  ||(y===6&&index===y+-2))&&
-              color === "white") ||
-            ((innerIndex === x + 1 || innerIndex === x - 1) &&
-              innerElem.piece !== "" &&
-              index === y + 1 &&
-              color==="white"&&
-              color !== innerElem.color &&
-              innerElem.color)|| 
+              (innerIndex === x &&
+                  innerElem.piece === "" &&
+                  (index === y + 1 || (y === 1 && index === y + 2)) &&
+                  color === "black") ||
+              (innerIndex === x &&
+                  innerElem.piece === "" &&
+                  (index === y - 1 || (y === 6 && index === y + -2)) &&
+                  color === "white") ||
               ((innerIndex === x + 1 || innerIndex === x - 1) &&
-              innerElem.piece !== "" &&
-              index === y - 1 &&
-              color==="white"&&
-              color !== innerElem.color &&
-              innerElem.color)
+                  innerElem.piece !== "" &&
+                  index === y + 1 &&
+                  color === "black" &&
+                  color !== innerElem.color &&
+                  innerElem.color) ||
+              ((innerIndex === x + 1 || innerIndex === x - 1) &&
+                  innerElem.piece !== "" &&
+                  index === y - 1 &&
+                  color === "white" &&
+                  color !== innerElem.color &&
+                  innerElem.color)
           ) {
             return {
               ...innerElem,
